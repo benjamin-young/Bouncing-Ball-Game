@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2020 by bpyoung1234 (http://jsbin.com/jidulaw/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+<style id="jsbin-css">
+body { 
+		margin: 0; 
+  	}
+
+canvas {
+    display: block;
+		margin: 0;
+	  }
+</style>
+</head>
+<body>
+<canvas id="myCanvas" ></canvas>
+<script id="jsbin-javascript">
+var canvas = document.getElementById('myCanvas');
+var context = canvas.getContext('2d');
+      
+canvas.height = innerHeight;
+canvas.width = innerWidth;
+var y = 50;
+var x = canvas.width/2;
+var ySpeed = 0.8;
+var xSpeed = 0;
+var radius = Math.sqrt((canvas.height*canvas.width)/(25*Math.PI));
+var theta;
+var acc = 0.08;
+var score = 0;
+var started = false;
+var highScore = 0;
+canvas.addEventListener("click", onClick, false);
+
+
+
+
+setInterval(function(){ 
+  if(started == false){
+     context.fillStyle = "#3b3a36";
+     context.fillRect(0, 0, canvas.width, canvas.height);
+     context.fillStyle = "#c0dfd9";
+     context.font="30px Verdana";
+     context.fillText("Tap Screen To Start",10,90);
+     context.font="20px Verdana";
+     context.fillText("Highscore: " + score,10,140);
+  }
+  else{
+  context.fillStyle = "#3b3a36";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "#c0dfd9";
+  context.font="30px Verdana";
+  context.fillText(score,10,90);
+  ballFalling();
+  }
+}, 10);
+
+function ballFalling(){
+  y+=ySpeed;
+  ySpeed += acc;
+  x+=xSpeed;
+  context.beginPath();
+  context.arc(x, y, radius , 0, 2 * Math.PI, false);
+  context.fillStyle = "#b3c2bf";
+  context.fill();
+  
+if (y>canvas.height){
+  y = 50;
+  ySpeed = 1;
+  x = canvas.width/2;
+  ySpeed = 1;
+  xSpeed = 0;
+  
+  score = 0;
+  started = false
+}
+
+if(x-radius<0||x+radius>canvas.width){ 
+  bounce();
+}
+}
+
+function bounce(){
+   if(x-radius<0){
+      x += 2;
+   }
+   else if(x+radius>canvas.width){
+      x -= 2;
+   }
+   
+   ySpeed = ySpeed*0.5;
+   xSpeed = -xSpeed*0.5;
+   
+}
+
+function onClick(e) {
+    if(started == false){
+       started = true;
+    }
+    else{
+    var ClickX = e.pageX;
+    var ClickY = e.pageY;
+    var dy = Math.abs(ClickY - y);
+    var dx = ClickX - x;
+    theta = Math.atan(dy/dx);
+
+    var dist = dy/Math.sin(Math.abs(theta));
+    if(dist < radius){
+      score++;
+      if(score > highScore){
+         highScore = score;
+      }
+      ySpeed = -10*Math.cos(theta);
+      xSpeed = -10*Math.sin(theta);
+    }
+    }
+}
+</script>
+</body>
+</html>
